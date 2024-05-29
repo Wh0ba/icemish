@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "340727636000",
+    "project_id": "icemish-flutter",
+    "storage_bucket": "icemish-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:340727636000:android:d05d1c10b4d9d43b3c9c45",
+        "android_client_info": {
+          "package_name": "com.wh0ba.icemish"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdh2C_Ed2E_sN6WzkMh7sABCaOfJT1FtA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,18 +1,21 @@
-class Transaction {
+class LogTransaction {
+  final String id;
   final String itemName;
   final int itemCount;
   final int totalPrice;
   final DateTime timestamp;
 
-  Transaction({
+  LogTransaction({
+    required this.id,
     required this.itemName,
     required this.itemCount,
     required this.totalPrice,
     required this.timestamp,
   });
 
-  factory Transaction.fromMap(Map<String, dynamic> map) {
-    return Transaction(
+  factory LogTransaction.fromMap(Map<String, dynamic> map) {
+    return LogTransaction(
+      id: map['id'],
       itemName: map['itemName'],
       itemCount: map['itemCount'],
       totalPrice: map['totalPrice'],
@@ -22,6 +25,7 @@ class Transaction {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'itemName': itemName,
       'itemCount': itemCount,
       'totalPrice': totalPrice,

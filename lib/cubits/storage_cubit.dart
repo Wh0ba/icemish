@@ -1,12 +1,18 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icemish/models/item_model.dart';
 import 'package:icemish/models/transaction_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 const String itemPrefsKey = 'items_prefs_key';
 const String transactionsPrefsKey = 'transactions_prefs_key';
+const String pathToLogs = 'logs';
+final logsReference = FirebaseFirestore.instance.collection(pathToLogs);
+
+const uuid = Uuid();
 
 class StorageCubit extends Cubit<List<Item>> {
   StorageCubit() : super([]) {
@@ -65,11 +71,11 @@ class StorageCubit extends Cubit<List<Item>> {
     prefs.setStringList(itemPrefsKey, items);
   }
 
-
   void checkout() async {
     final transactions = await _loadTransactions();
     final newTransactions = state.where((item) => item.count > 0).map((item) {
-      return Transaction(
+      return LogTransaction(
+        id: uuid.v4(),
         itemName: item.name,
         itemCount: item.count,
         totalPrice: item.count * item.price,
@@ -82,18 +88,58 @@ class StorageCubit extends Cubit<List<Item>> {
     prefs.setStringList(transactionsPrefsKey,
         updatedTransactions.map((t) => jsonEncode(t.toMap())).toList());
 
+    await uploadLogsWithTransaction(newTransactions);
     clear();
   }
 
-  Future<List<Transaction>> _loadTransactions() async {
-    final prefs = await SharedPreferences.getInstance();
-    final transactions = prefs.getStringList(transactionsPrefsKey) ?? [];
-    if (transactions.isNotEmpty) {
-      return transactions.map((t) => Transaction.fromMap(jsonDecode(t))).toList();
+  Future<void> uploadLogsWithTransaction(
+      List<LogTransaction> updatedTransactions) async {
+    final batch = FirebaseFirestore.instance.batch();
+
+    for (final log in updatedTransactions) {
+      final logDoc = logsReference.doc(log.id);
+      final logSnapshot = await logDoc.get();
+
+      if (!logSnapshot.exists) {
+        batch.set(logDoc, log.toMap());
+      } else {
+        print('Duplicate log found: ${log.id}');
+      }
     }
-    return [];
+
+    await batch.commit();
   }
-    Future<List<Transaction>> getTransactions() async {
+
+  // Future<List<LogTransaction>> _loadTransactions() async {
+
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final transactions = prefs.getStringList(transactionsPrefsKey) ?? [];
+  //   if (transactions.isNotEmpty) {
+  //     return transactions
+  //         .map((t) => LogTransaction.fromMap(jsonDecode(t)))
+  //         .toList();
+  //   }
+  //   return [];
+  // }
+
+  Future<List<LogTransaction>> _loadTransactions() async {
+    try {
+      // Get all documents in the collection
+      final querySnapshot = await logsReference.get();
+
+      // Map documents to LogTransaction objects
+      final transactions = querySnapshot.docs.map((doc) {
+        return LogTransaction.fromMap(doc.data());
+      }).toList();
+
+      return transactions;
+    } catch (e) {
+      print('Error loading transactions: $e');
+      return [];
+    }
+  }
+
+  Future<List<LogTransaction>> getTransactions() async {
     return await _loadTransactions();
   }
 }

@@ -80,7 +80,7 @@ class ItemCounter extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                'تأكيد الحذف',
+                'الخيارات',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
