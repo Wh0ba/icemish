@@ -10,17 +10,20 @@ class CartSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Colors.orange.shade300,
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('$totalAmount IQD'),
+          Text('$totalAmount IQD', style: const TextStyle(fontSize: 17)),
           ElevatedButton(
             onPressed: () {
-              //get items and thier count
-              print(BlocProvider.of<StorageCubit>(context).state);
+              BlocProvider.of<StorageCubit>(context).checkout();
             },
-            child: const Text('Checkout'),
+            child: const Text('تسجيل الدفع',
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
           ),
         ],
       ),

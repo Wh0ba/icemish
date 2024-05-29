@@ -9,12 +9,16 @@ import 'components/cart_summary.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
-  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              context.read<StorageCubit>().clear();
+            },
+            icon: const Icon(Icons.refresh)),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -27,7 +31,7 @@ class Dashboard extends StatelessWidget {
           ),
         ],
         elevation: 1,
-        title: const Text('مشمشة'),
+        title: const Text('مشمشة', style: TextStyle(fontFamily: 'kufi')),
         centerTitle: true,
       ),
       body: Column(
