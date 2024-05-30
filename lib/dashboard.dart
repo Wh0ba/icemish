@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:icemish/auth/auth.dart';
+import 'package:icemish/auth_pages/sign_in_page.dart';
 import 'package:icemish/components/add_item_dialog.dart';
 import 'package:icemish/components/item_counter.dart';
 import 'package:icemish/cubits/storage_cubit.dart';
@@ -16,9 +18,42 @@ class Dashboard extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
-              context.read<StorageCubit>().clear();
+              showDialog(
+                  context: context,
+                  builder: (_) => Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: AlertDialog(
+                            title: const Text('تسجيل خروج'),
+                            content: const Text('هل تريد تسجيل الخروج؟'),
+                            actions: [
+                              TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: const Text('لا',
+                                      style: TextStyle(fontSize: 20))),
+                              TextButton(
+                                  onPressed: () async {
+                                    await signOut();
+
+                                    if (context.mounted) {
+                                      Navigator.of(context).popUntil(
+                                        (route) => route.isFirst,
+                                      );
+                                      
+                                      Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                              builder: (_) =>
+                                                  const SignInPage()));
+                                    }
+                                  },
+                                  child: const Text('نعم',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                          color: Colors.red))),
+                            ]),
+                      ));
             },
-            icon: const Icon(Icons.refresh)),
+            icon: const Icon(Icons.logout)),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),

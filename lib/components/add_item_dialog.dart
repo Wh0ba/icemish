@@ -7,10 +7,10 @@ class AddItemDialog extends StatefulWidget {
   const AddItemDialog({super.key, required this.onAdd});
 
   @override
-  _AddItemDialogState createState() => _AddItemDialogState();
+  AddItemDialogState createState() => AddItemDialogState();
 }
 
-class _AddItemDialogState extends State<AddItemDialog> {
+class AddItemDialogState extends State<AddItemDialog> {
   final _nameController = TextEditingController();
   final _priceController = TextEditingController();
 

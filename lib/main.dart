@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icemish/auth_pages/sign_in_page.dart';
 import 'package:icemish/cubits/storage_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:icemish/tabs_page.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -35,7 +37,9 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
           useMaterial3: true,
         ),
-        home: const SignInPage(),
+        home: FirebaseAuth.instance.currentUser != null
+            ? const TabsPage()
+            : const SignInPage(),
       ),
     );
   }

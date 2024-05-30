@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icemish/models/item_model.dart';
 import 'package:icemish/models/transaction_model.dart';
@@ -9,8 +10,6 @@ import 'package:uuid/uuid.dart';
 
 const String itemPrefsKey = 'items_prefs_key';
 const String transactionsPrefsKey = 'transactions_prefs_key';
-const String pathToLogs = 'logs';
-final logsReference = FirebaseFirestore.instance.collection(pathToLogs);
 
 const uuid = Uuid();
 
@@ -94,6 +93,9 @@ class StorageCubit extends Cubit<List<Item>> {
 
   Future<void> uploadLogsWithTransaction(
       List<LogTransaction> updatedTransactions) async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final String pathToLogs = 'users/$uid/logs';
+    final logsReference = FirebaseFirestore.instance.collection(pathToLogs);
     final batch = FirebaseFirestore.instance.batch();
 
     for (final log in updatedTransactions) {
@@ -110,19 +112,10 @@ class StorageCubit extends Cubit<List<Item>> {
     await batch.commit();
   }
 
-  // Future<List<LogTransaction>> _loadTransactions() async {
-
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final transactions = prefs.getStringList(transactionsPrefsKey) ?? [];
-  //   if (transactions.isNotEmpty) {
-  //     return transactions
-  //         .map((t) => LogTransaction.fromMap(jsonDecode(t)))
-  //         .toList();
-  //   }
-  //   return [];
-  // }
-
   Future<List<LogTransaction>> _loadTransactions() async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final String pathToLogs = 'users/$uid/logs';
+    final logsReference = FirebaseFirestore.instance.collection(pathToLogs);
     try {
       // Get all documents in the collection
       final querySnapshot = await logsReference.get();
