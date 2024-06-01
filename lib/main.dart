@@ -37,10 +37,29 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
           useMaterial3: true,
         ),
-        home: FirebaseAuth.instance.currentUser != null
-            ? const TabsPage()
-            : const SignInPage(),
+        home: const AuthWrapper(),
       ),
+    );
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(); 
+        }
+        if (snapshot.hasData) {
+          return const TabsPage();
+        } else {
+          return const SignInPage();
+        }
+      },
     );
   }
 }

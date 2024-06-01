@@ -135,4 +135,13 @@ class StorageCubit extends Cubit<List<Item>> {
   Future<List<LogTransaction>> getTransactions() async {
     return await _loadTransactions();
   }
+
+  Future<void> deleteLogTransaction(LogTransaction t) async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final String pathToLogs = 'users/$uid/logs';
+    final logsReference = FirebaseFirestore.instance.collection(pathToLogs);
+    final batch = FirebaseFirestore.instance.batch();
+    batch.delete(logsReference.doc(t.id));
+    await batch.commit();
+  }
 }

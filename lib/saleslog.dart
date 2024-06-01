@@ -40,7 +40,7 @@ class _SalesLogState extends State<SalesLog> {
               return const Center(
                   child: Opacity(
                 opacity: 0.4,
-                child: Text('لا يوجد مبيعات',
+                child: Text('لا توجد مبيعات',
                     style: TextStyle(
                       fontSize: 35,
                       fontWeight: FontWeight.bold,
@@ -56,6 +56,47 @@ class _SalesLogState extends State<SalesLog> {
                     bottom: 10,
                   ),
                   child: ListTile(
+                      onLongPress: () {
+                        showDialog(
+                            context: context,
+                            builder: (_) => Directionality(
+                                  textDirection: TextDirection.rtl,
+                                  child: AlertDialog(
+                                    title: const Text('تأكيد الحذف',
+                                        style: TextStyle(fontSize: 25)),
+                                    content: const Text(
+                                        'هل تريد حذف هذه المبيعة؟',
+                                        style: TextStyle(fontSize: 16)),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          child: const Text(
+                                            'لا',
+                                            style: TextStyle(fontSize: 20),
+                                          )),
+                                      TextButton(
+                                          onPressed: () async {
+                                            await context
+                                                .read<StorageCubit>()
+                                                .deleteLogTransaction(
+                                                    transaction);
+                                            if (context.mounted) {
+                                              Navigator.of(context).pop();
+                                            }
+                                            setState(() {});
+                                          },
+                                          child: const Text(
+                                            'نعم',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.red,
+                                                fontWeight: FontWeight.bold),
+                                          )),
+                                    ],
+                                  ),
+                                ));
+                      },
                       tileColor: index % 2 == 0
                           ? Colors.red.shade100
                           : Colors.orange.shade200,

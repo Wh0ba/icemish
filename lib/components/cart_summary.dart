@@ -20,6 +20,9 @@ class CartSummary extends StatelessWidget {
           Text('$totalAmount IQD', style: const TextStyle(fontSize: 17)),
           ElevatedButton(
             onPressed: () {
+              if (totalAmount <= 0) {
+                return;
+              }
               BlocProvider.of<StorageCubit>(context).checkout();
             },
             child: const Text('تسجيل الدفع',

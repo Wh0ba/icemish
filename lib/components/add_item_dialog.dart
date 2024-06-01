@@ -13,6 +13,7 @@ class AddItemDialog extends StatefulWidget {
 class AddItemDialogState extends State<AddItemDialog> {
   final _nameController = TextEditingController();
   final _priceController = TextEditingController();
+  final _formkey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -20,19 +21,34 @@ class AddItemDialogState extends State<AddItemDialog> {
       textDirection: TextDirection.rtl,
       child: AlertDialog(
         title: const Text('إضافة منتج جديد'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'أسم المنتج'),
-            ),
-            TextField(
-              controller: _priceController,
-              decoration: const InputDecoration(labelText: 'سعر المنتج'),
-              keyboardType: TextInputType.number,
-            ),
-          ],
+        content: Form(key: _formkey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'ادخل اسم المنتج';
+                }
+                return null;
+              },
+                controller: _nameController,
+                decoration: const InputDecoration(labelText: 'أسم المنتج'),
+              ),
+              TextFormField(validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'ادخل سعر المنتج';
+                }
+                if (int.tryParse(value) == null) {
+                  return 'سعر المنتج يجب أن يكون عدد';
+                }
+                return null;
+              },
+                controller: _priceController,
+                decoration: const InputDecoration(labelText: 'سعر المنتج'),
+                keyboardType: TextInputType.number,
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(

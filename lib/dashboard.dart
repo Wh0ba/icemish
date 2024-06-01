@@ -38,7 +38,7 @@ class Dashboard extends StatelessWidget {
                                       Navigator.of(context).popUntil(
                                         (route) => route.isFirst,
                                       );
-                                      
+
                                       Navigator.of(context).pushReplacement(
                                           MaterialPageRoute(
                                               builder: (_) =>
@@ -69,25 +69,54 @@ class Dashboard extends StatelessWidget {
         title: const Text('مشمشة', style: TextStyle(fontFamily: 'kufi')),
         centerTitle: true,
       ),
-      body: Column(
+      body: Stack(
         children: [
-          BlocBuilder<StorageCubit, List<Item>>(
-            builder: (context, items) {
-              return Expanded(
-                child: ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    return ItemCounter(item: items[index]);
-                  },
-                ),
-              );
-            },
+          Positioned(
+            top: 0,
+            right: 0,
+            left: 0,
+            bottom: 50,
+            child: Center(
+              child: BlocBuilder<StorageCubit, List<Item>>(
+                builder: (context, items) {
+                  if (MediaQuery.sizeOf(context).width > 600) {
+                    return GridView.builder(
+                      itemCount: items.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              mainAxisExtent: 150,
+                              childAspectRatio: 1.5,
+                              crossAxisCount: 2),
+                      itemBuilder: (context, index) {
+                        return Center(
+                          child: SizedBox(
+                              width: 600,
+                              child: ItemCounter(item: items[index])),
+                        );
+                      },
+                    );
+                  }
+                  return ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      return ItemCounter(item: items[index]);
+                    },
+                  );
+                },
+              ),
+            ),
           ),
-          const Spacer(),
-          BlocBuilder<StorageCubit, List<Item>>(builder: (context, items) {
-            return CartSummary(
-                totalAmount: items.fold(0, (a, b) => a + (b.price * b.count)));
-          })
+          Positioned(
+            bottom: 0,
+            right: 0,
+            left: 0,
+            child: BlocBuilder<StorageCubit, List<Item>>(
+                builder: (context, items) {
+              return CartSummary(
+                  totalAmount:
+                      items.fold(0, (a, b) => a + (b.price * b.count)));
+            }),
+          )
         ],
       ),
     );

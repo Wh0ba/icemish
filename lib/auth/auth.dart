@@ -10,7 +10,7 @@ Future<User?> signUpWithEmailAndPassword(String email, String password) async {
     return userCredential.user;
   } on FirebaseAuthException catch (e) {
     
-    return null;
+    return Future.error(e.message!);
   }
 }
 
@@ -23,7 +23,7 @@ Future<User?> signInWithEmailAndPassword(String email, String password) async {
     );
     return userCredential.user;
   } on FirebaseAuthException catch (e) {
-    return null;
+    return Future.error(e.message!);
   }
 }
 

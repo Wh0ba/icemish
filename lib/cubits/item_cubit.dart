@@ -6,7 +6,6 @@ import 'package:icemish/cubits/storage_cubit.dart';
 import '../models/item_model.dart';
 
 class ItemCubit extends Cubit<int> {
-  // final CartCubit cartCubit;
   final StorageCubit storageCubit;
   final Item item;
 
